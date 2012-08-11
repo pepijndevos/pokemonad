@@ -4,17 +4,15 @@ import Card
 import Attacks
 
 evolve :: Stack -> Card -> Stack
-evolve basic @ (Stack basicPokemon cards counters) evolution
+evolve basic@(Stack basicPokemon cards counters) evolution
 	| evolvesFrom evolution == Just (name basicPokemon) =
 		Stack evolution (basicPokemon:cards) counters
 	| otherwise = basic
 
-isEnergy :: Card -> Bool
-isEnergy (Energy _) = True
-isEnergy _ = False
-
-energy :: Stack -> [Card]
-energy (Stack _ cards _) = filter isEnergy  cards
+attachEnergy :: Stack -> Card -> Stack
+attachEnergy st@(Stack pkm cards counters) en@(Energy _) =
+	Stack pkm (en:cards) counters
+attachEnergy st _ = st
 
 pikachu = Pokemon {
 	  name = "Pikachu"

@@ -32,10 +32,23 @@ payRest :: ([Card], [Card]) -> Bool
 payRest (cost, attached) = length colourless <= length attached && coloured == []
 	where (colourless, coloured) = partition isColourless cost
 
+enoughEnergy :: ([Card], [Card]) -> Bool
+enoughEnergy = payRest . payColoured
+
+isEnergy :: Card -> Bool
+isEnergy (Energy _) = True
+isEnergy _ = False
+
+energy :: Stack -> [Card]
+energy (Stack _ cards _) = filter isEnergy  cards
+
 performAttack :: Int -> Opponents -> Opponents
 performAttack index (att @ (Stack pkm _ _), def) =
-	let (required, attfn) = (attacks pkm) !! index in
-		(att, def)
+	let (cost, attfn) = (attacks pkm) !! index in
+		if enoughEnergy (cost, energy att) then
+			attfn (att, def)
+		else
+			(att, def)
 
 poison :: Effect
 poison (att, def @ (Stack _ _ counters))
