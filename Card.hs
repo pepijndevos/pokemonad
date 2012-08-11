@@ -8,7 +8,7 @@ data Card = Trainer String Effect
 		    , colour :: Colour
 		    , hitPoints :: Int
 		    , evolvesFrom :: Maybe String
-		    , attacks :: [([Card], Effect)]
+		    , attacks :: [([Card], String, Effect)]
 		    , retreatCost :: Int
 		    , weakness :: Maybe Colour
 		    , resistance :: Maybe Colour}

@@ -44,7 +44,7 @@ energy (Stack _ cards _) = filter isEnergy  cards
 
 performAttack :: Int -> Opponents -> Opponents
 performAttack index (att @ (Stack pkm _ _), def) =
-	let (cost, attfn) = (attacks pkm) !! index in
+	let (cost, _,  attfn) = (attacks pkm) !! index in
 		if enoughEnergy (cost, energy att) then
 			attfn (att, def)
 		else
