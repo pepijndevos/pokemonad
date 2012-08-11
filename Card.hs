@@ -1,28 +1,49 @@
-module Card (Card(..)
-	    ,Counter(..)
-	    ,Colour(..)) where
+module Card where
 
-import Pokemon
+import Text.Show.Functions
 
-data Card = Trainer Effect
+data Card = Trainer String Effect
 	  | Energy Colour
-	  | Pokemon { name :: Pokemon
+	  | Pokemon { name :: String
 		    , colour :: Colour
 		    , hitPoints :: Int
-		    , evolvesFrom :: Pokemon
-		    , attacks :: [Effect]
+		    , evolvesFrom :: Maybe String
+		    , attacks :: [([Card], Effect)]
 		    , retreatCost :: Int
 		    , weakness :: Maybe Colour
 		    , resistance :: Maybe Colour}
-	  deriving(Eq, Show)
+
+instance Show Card where
+	show (Energy colour) = show colour ++ " energy"
+	show (Trainer name _) = "Trainer " ++ name
+	show (Pokemon { name=name, hitPoints=hp }) = name ++ " (" ++ show hp ++ "HP)"
+
+instance Eq Card where
+	(Energy a) == (Energy b) = (a == b)
+	(Trainer a _) == (Trainer b _) = (a == b)
+	(Pokemon { name=a }) == (Pokemon { name=b }) = (a == b)
 
 data Stack = Stack Card [Card] [Counter]
-	   deriving(Eq, Show)
 
-type Effect = Card -> Card
+instance Show Stack where
+	show (Stack pkm cards counters) =
+		show pkm ++ " " ++
+		concatMap show counters ++ "\n" ++
+		unlines (map (\p -> "\t" ++ show p) cards)
+
+type Opponents = (Stack, Stack)
+type Effect = Opponents -> Opponents
 
 data Counter = DamageCounter | PoisonCounter | SleepCounter | ParalyzeCounter | ConfusionCounter
-	     deriving(Eq, Show)
+	     deriving(Eq)
 
-data Colour = Grass | Fire | Water | Lightning | Fighting | Psychic | Colorless
+instance Show Counter where
+	show DamageCounter = "(10)"
+	show PoisonCounter = "\9760"
+	show _ = ""
+
+data Colour = Grass | Fire | Water | Lightning | Fighting | Psychic | Colourless
 	    deriving(Eq, Show)
+
+makeStack :: Card -> Stack
+makeStack c = Stack c [] []
