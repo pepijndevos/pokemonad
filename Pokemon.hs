@@ -3,16 +3,15 @@ module Pokemon where
 import Card
 import Attacks
 
-evolve :: Stack -> Card -> Stack
-evolve basic@(Stack basicPokemon cards counters) evolution
+attach :: Stack -> Card -> Stack
+attach basic@(Stack basicPokemon cards counters) evolution@(Pokemon {})
 	| evolvesFrom evolution == Just (name basicPokemon) =
 		Stack evolution (basicPokemon:cards) counters
-	| otherwise = basic
 
-attachEnergy :: Stack -> Card -> Stack
-attachEnergy st@(Stack pkm cards counters) en@(Energy _) =
+attach st@(Stack pkm cards counters) en@(Energy _) =
 	Stack pkm (en:cards) counters
-attachEnergy st _ = st
+
+attach st _ = st
 
 pikachu = Pokemon {
 	  name = "Pikachu"
